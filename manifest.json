@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.alxwolfenstein97.omamenu",
+  "name": "OmaMenu",
+  "version": "1.0.0",
+  "author": "AlxWolfenstein97",
+  "license": "MIT",
+  "description": "Omarchy menu clone with marquee scrolling for truncated highlighted rows (and their search/dmenu sublines). Honours the stock launcher.hides list.",
+  "homepage": "https://github.com/AlxWolfenstein97/omamenu",
+  "repository": "https://github.com/AlxWolfenstein97/omamenu",
+  "kinds": [
+    "menu",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "menu": "Menu.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "OmaMenu",
+    "description": "Launches the Omarchy menu with scrolling labels",
+    "category": "Compositor",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.menu"
+  }
+}
