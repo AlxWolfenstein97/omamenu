@@ -5,8 +5,6 @@ normally die behind an ellipsis scroll far enough to read.**
 
 ![OmaMenu on Hackerman — highlighted app name mid-marquee](preview.png)
 
-*Preview captured with [OMCP](https://github.com/btsouth/omarchy-omcp) on the Hackerman theme.*
-
 Works in Apps, Fonts, Gaming, plugin enable/disable/clone/remove (including
 the id subline), and search results. Idle rows still elide. Highlighted rows
 that actually overflow pause, scroll once through the hidden tail, pause,
@@ -53,6 +51,16 @@ omarchy plugin remove io.github.alxwolfenstein97.omamenu
   populate, with the same hide list as stock.
 - Bar widget IPC targets stay `omarchy.menu`; the shell routes them through
   `clonedFrom`.
+
+## Credits
+
+- [Omarchy](https://omarchy.org/) — the first-party menu this clones.
+- [OMCP](https://github.com/btsouth/omarchy-omcp) — MCP desktop bridge
+  (screenshots, themes, window focus, …). This plugin was basically built
+  through it: open the menu, poke Apps / Gaming / Fonts / plugin pickers,
+  catch empty lists and mid-marquee bugs, swap to Hackerman for the preview,
+  repeat. Install with
+  `omarchy plugin add https://github.com/btsouth/omarchy-omcp --enable`.
 
 ## License
 
