@@ -5,6 +5,8 @@ normally die behind an ellipsis scroll far enough to read.**
 
 ![OmaMenu on Hackerman — highlighted app name mid-marquee](preview.png)
 
+*Preview captured with [OMCP](https://github.com/btsouth/omarchy-omcp) on the Hackerman theme.*
+
 Works in Apps, Fonts, Gaming, plugin enable/disable/clone/remove (including
 the id subline), and search results. Idle rows still elide. Highlighted rows
 that actually overflow pause, scroll once through the hidden tail, pause,
