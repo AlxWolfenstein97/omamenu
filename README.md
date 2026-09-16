@@ -42,7 +42,12 @@ carousel. (The Style theme extenders that *do* draw PNGs pull `python-pillow`
 themselves; see [Chroma](https://github.com/AlxWolfenstein97/chroma) for the
 family map.)
 
-## Uninstall
+## Disable vs remove
+
+| Action | What happens |
+|--------|----------------|
+| `./uninstall.sh` | Disables this clone and re-enables stock `omarchy.menu`. No packages to drop. |
+| `omarchy plugin remove …` | Deletes the plugin folder after uninstall. |
 
 ```sh
 ~/.config/omarchy/plugins/io.github.alxwolfenstein97.omamenu/uninstall.sh
