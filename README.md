@@ -37,6 +37,11 @@ clone path uses). Or from a checkout:
 
 **Needs:** Omarchy shell / Quickshell. Super+Space opens the menu.
 
+No extra packages — OmaMenu is a Quickshell menu clone, not a Pillow mockup
+carousel. (The Style theme extenders that *do* draw PNGs pull `python-pillow`
+themselves; see [Chroma](https://github.com/AlxWolfenstein97/chroma) for the
+family map.)
+
 ## Uninstall
 
 ```sh
