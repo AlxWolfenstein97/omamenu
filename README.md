@@ -49,6 +49,8 @@ family map.)
 | `./uninstall.sh` | Disables this clone and re-enables stock `omarchy.menu`. No packages to drop. |
 | `omarchy plugin remove …` | Deletes the plugin folder after uninstall. |
 
+**Full wipe** — copy-paste:
+
 ```sh
 ~/.config/omarchy/plugins/io.github.alxwolfenstein97.omamenu/uninstall.sh
 omarchy plugin remove io.github.alxwolfenstein97.omamenu
