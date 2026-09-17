@@ -445,6 +445,8 @@ Item {
     return appRows.length
   }
 
+  // Prefer shell AppLibrary.iconSource (disk iconIndex across themes) like stock.
+  // Kept for any non-Image callers; app row Image uses appLibrary directly.
   function appIconSource(icon) {
     if (root.appLibrary) return root.appLibrary.iconSource(icon)
     var value = String(icon || "")
@@ -1443,7 +1445,7 @@ Item {
                 // PNG icons upscaled and blurry on HiDPI displays.
                 sourceSize.width: width * Screen.devicePixelRatio
                 sourceSize.height: height * Screen.devicePixelRatio
-                source: row.isApp ? root.appIconSource(row.appIcon) : ""
+                source: row.isApp && root.appLibrary ? root.appLibrary.iconSource(row.appIcon) : ""
                 asynchronous: true
                 anchors.left: parent.left
                 anchors.leftMargin: root.rowReservedBorderLeft + Style.space(8) + (Style.space(36) - width) / 2

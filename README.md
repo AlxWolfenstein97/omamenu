@@ -64,6 +64,15 @@ omarchy plugin remove io.github.alxwolfenstein97.omamenu
 - Bar widget IPC targets stay `omarchy.menu`; the shell routes them through
   `clonedFrom`.
 
+## Limits
+
+- **Icons** — when `shell.appLibrary` is available, app rows use
+  `appLibrary.iconSource` like stock (disk `iconIndex` scan across installed
+  themes’ apps/devices). That survives missing theme icon packs such as
+  Vantablack’s `Yaru-gray` / White’s `Yaru-grey`; fallbacks still resolve from
+  other Yaru/hicolor trees. Without `appLibrary`, icons fall back to
+  `Quickshell.iconPath` and may look wrong on those themes.
+- Marquee only runs on highlighted overflow rows; idle rows still elide.
 ## Credits
 
 - [Omarchy](https://omarchy.org/) — the first-party menu this clones.
