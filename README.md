@@ -66,13 +66,27 @@ omarchy plugin remove io.github.alxwolfenstein97.omamenu
 
 ## Limits
 
-- **Icons** — when `shell.appLibrary` is available, app rows use
-  `appLibrary.iconSource` like stock (disk `iconIndex` scan across installed
-  themes’ apps/devices). That survives missing theme icon packs such as
-  Vantablack’s `Yaru-gray` / White’s `Yaru-grey`; fallbacks still resolve from
-  other Yaru/hicolor trees. Without `appLibrary`, icons fall back to
-  `Quickshell.iconPath` and may look wrong on those themes.
+- **Icons** — prefer `appLibrary.iconSource` when the host wires it. This clone
+  usually gets a **null** `shell.appLibrary` proxy (stock menu gets the real
+  AppLibrary). Gating Image `source` on `appLibrary` alone blanks every app
+  icon after a shell restart. OmaMenu therefore: (1) try the proxy when
+  present, (2) run the same apps/devices + pixmaps disk scan stock uses
+  (`localIconIndex`), (3) fall back to `Quickshell.iconPath`, and (4) bump
+  `iconEpoch` after open / scan / `appsChanged` so Images rebind when file
+  URLs land. That covers missing packs such as Vantablack’s `Yaru-gray` /
+  White’s `Yaru-grey`.
 - Marquee only runs on highlighted overflow rows; idle rows still elide.
+
+## Fresh VM smoke test
+
+```sh
+omarchy plugin add https://github.com/AlxWolfenstein97/omamenu.git --enable
+# disable stock menu if the clone owns the bar slot (Workshop / clone flow)
+omarchy-restart-shell
+# Apps submenu: icons should appear within ~1–2s of first open (disk scan).
+# Switch to a theme with a missing icon pack (e.g. vantablack → Yaru-gray) if
+# installed; icons should still fill in after the scan, not stay blank forever.
+```
 ## Credits
 
 - [Omarchy](https://omarchy.org/) — the first-party menu this clones.

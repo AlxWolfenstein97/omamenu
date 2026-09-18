@@ -154,6 +154,14 @@ Item {
   // sources AppLibrary uses — launcher.hides + NoDisplay/OnlyShowIn scan.
   property var configuredHiddenEntryIds: ({})
   property var desktopHiddenEntryIds: ({})
+  // PluginAppLibraryApi.iconSource is a JS callback — unlike stock's real
+  // AppLibrary, swapping iconIndex does not invalidate Image bindings. Bump
+  // this so appIconSource re-runs after the disk scan finishes (and after
+  // appsChanged). Critical for themes whose gsettings pack is missing
+  // (Vantablack → Yaru-gray): first paint is empty until the index lands.
+  property int iconEpoch: 0
+  property var localIconIndex: ({})
+  property var pendingLocalIconIndex: ({})
   property bool deleteConfirmOpen: false
   property var deleteTarget: null
   onOpenedChanged: if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
@@ -446,15 +454,57 @@ Item {
   }
 
   // Prefer shell AppLibrary.iconSource (disk iconIndex across themes) like stock.
-  // Kept for any non-Image callers; app row Image uses appLibrary directly.
+  // OmaMenu often gets a null appLibrary proxy (third-party menu clone) — fall
+  // through to a local disk index, then Quickshell.iconPath.
   function appIconSource(icon) {
-    if (root.appLibrary) return root.appLibrary.iconSource(icon)
+    var _ = root.iconEpoch
+    if (root.appLibrary) {
+      var fromLib = root.appLibrary.iconSource(icon)
+      if (fromLib && fromLib.length > 0) return fromLib
+    }
     var value = String(icon || "")
     if (!value) return Quickshell.iconPath("application-x-executable", true)
     if (value.indexOf("file://") === 0 || value.indexOf("image://") === 0) return value
     if (value.charAt(0) === "/") return Util.fileUrl(value)
+    var found = root.localIconIndex[value]
+    if (found) return Util.fileUrl(found)
     var themed = Quickshell.iconPath(value, true)
     return themed.length > 0 ? themed : Quickshell.iconPath("application-x-executable", true)
+  }
+
+  function kickIconBinds() {
+    root.iconEpoch += 1
+    // iconIndex scan walks every XDG icons tree; keep rebinding for a few
+    // seconds so file:// hits from the index replace empty themed lookups.
+    iconBindRefresh.remaining = 8
+    if (!root.appLibrary && !localIconIndexScan.running)
+      localIconIndexScan.running = true
+  }
+
+  function indexLocalIconLine(path) {
+    var value = String(path || "").trim()
+    if (value.length === 0) return
+    var slash = value.lastIndexOf("/")
+    var file = slash >= 0 ? value.slice(slash + 1) : value
+    var dot = file.lastIndexOf(".")
+    var name = dot > 0 ? file.slice(0, dot) : file
+    if (name.length > 0 && root.pendingLocalIconIndex[name] === undefined)
+      root.pendingLocalIconIndex[name] = value
+  }
+
+  // Same apps/devices + pixmaps walk AppLibrary uses, for when the host does
+  // not wire shell.appLibrary (missing Yaru-gray / Yaru-grey survive this).
+  function localIconIndexScanCommand() {
+    return [
+      'dirs="$HOME/.icons $HOME/.local/share/icons";',
+      'IFS=":"; for d in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do dirs="$dirs $d/icons"; done; unset IFS;',
+      'for ext in svg png; do',
+      '  for base in $dirs; do',
+      '    [[ -d $base ]] && find "$base" \\( -path "*/apps/*" -o -path "*/devices/*" \\) -name "*.$ext" 2>/dev/null;',
+      '  done;',
+      '  find /usr/share/pixmaps -maxdepth 1 -name "*.$ext" 2>/dev/null;',
+      'done'
+    ].join(" ")
   }
 
   function launchApp(appId, label) {
@@ -960,6 +1010,7 @@ Item {
     // The shell may start before first-install packages have finished placing
     // their icons. Refresh here even when the desktop entry list did not change.
     if (root.appLibrary) root.appLibrary.refreshIcons()
+    root.kickIconBinds()
 
     Qt.callLater(function() { keyCatcher.forceActiveFocus() })
   }
@@ -1060,7 +1111,31 @@ Item {
   Connections {
     target: root.appLibrary
     function onAppsChanged() {
+      root.kickIconBinds()
       if (root.providersLoaded["apps"]) root.mergeAppRows()
+    }
+  }
+
+  Timer {
+    id: iconBindRefresh
+    interval: 750
+    repeat: true
+    property int remaining: 0
+    running: remaining > 0
+    onTriggered: {
+      root.iconEpoch += 1
+      remaining -= 1
+    }
+  }
+
+  Process {
+    id: localIconIndexScan
+    command: ["bash", "-c", root.localIconIndexScanCommand()]
+    stdout: SplitParser { onRead: function(line) { root.indexLocalIconLine(line) } }
+    onStarted: root.pendingLocalIconIndex = ({})
+    onExited: {
+      root.localIconIndex = root.pendingLocalIconIndex
+      root.iconEpoch += 1
     }
   }
 
@@ -1445,7 +1520,7 @@ Item {
                 // PNG icons upscaled and blurry on HiDPI displays.
                 sourceSize.width: width * Screen.devicePixelRatio
                 sourceSize.height: height * Screen.devicePixelRatio
-                source: row.isApp && root.appLibrary ? root.appLibrary.iconSource(row.appIcon) : ""
+                source: row.isApp ? root.appIconSource(row.appIcon) : ""
                 asynchronous: true
                 anchors.left: parent.left
                 anchors.leftMargin: root.rowReservedBorderLeft + Style.space(8) + (Style.space(36) - width) / 2
