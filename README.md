@@ -21,6 +21,10 @@ It also keeps the stock Apps filter: `/usr/share/omarchy/default/omarchy/launche
 plus the usual `NoDisplay` / `OnlyShowIn` scan, so Avahi and friends stay out
 of the list.
 
+This is a small fork of stock menu (marquee + clone plumbing) — upstream menu
+fixes land here when we refresh the repo; grab them with
+`omarchy plugin update`. You don’t need to rebase anything yourself.
+
 ## Install
 
 ```sh
