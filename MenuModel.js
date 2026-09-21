@@ -98,9 +98,9 @@ function mergeMenuSources(defaultItems, userItems) {
 // assign in one go. They must never write into the maps they are handed: those
 // live in QML `var` properties, and an in-place write into such an object is
 // occasionally dropped by the engine — the key lands with an undefined value.
-// A lost write used to leave an id in itemOrder with no item behind it, and
-// the next merge then kept that orphan and appended a second row for the same
-// app, so the launcher listed it twice (and again on every later rescan).
+// A lost write can leave an id in itemOrder with no item behind it, and
+// the next merge then keeps that orphan and appends a second row for the same
+// app, so the launcher would list it twice (and again on every later rescan).
 
 // Swaps every app row for the current set. Rows keep the order they arrive in;
 // ids already claimed (including duplicate desktop ids) are listed once.

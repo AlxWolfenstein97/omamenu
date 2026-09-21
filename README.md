@@ -14,7 +14,7 @@ then reset — no ping-pong, no endless wrap.
 
 Omarchy’s menu is narrow on purpose. Long labels (`Heroic (Epic Games)`,
 `RetroArch Game Launcher`, `io.github.…` plugin ids) get cut with `…`.
-Hovering or arrowing onto them used to leave you guessing. OmaMenu shows the
+Hovering or arrowing onto them leaves you guessing. OmaMenu shows the
 rest when you care, and stays quiet when the name already fits.
 
 It also keeps the stock Apps filter: `/usr/share/omarchy/default/omarchy/launcher.hides`
