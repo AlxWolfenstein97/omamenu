@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "author": "AlxWolfenstein97",
   "license": "MIT",
-  "description": "Omarchy menu clone with marquee scrolling for truncated highlighted rows (and their search/dmenu sublines). Honours the stock launcher.hides list.",
+  "description": "Omarchy menu clone with marquee scrolling for truncated highlighted rows.",
   "homepage": "https://github.com/AlxWolfenstein97/omamenu",
   "repository": "https://github.com/AlxWolfenstein97/omamenu",
   "kinds": [
