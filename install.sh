@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
-# OmaMenu installer. Enables this menu clone and parks the stock omarchy.menu.
+# OmaMenu installer. Enables this menu clone.
+# Omarchy parks stock omarchy.menu via clonedFrom — we do not disable other
+# user plugins (e.g. a local alex.menu clone) without consent.
 #
 set -euo pipefail
 
@@ -15,8 +17,6 @@ chmod 755 "$here"/install.sh "$here"/uninstall.sh "$here"/check.sh 2>/dev/null |
 omarchy-shell -q shell rescanPlugins >/dev/null 2>&1 || true
 
 if command -v omarchy >/dev/null 2>&1; then
-  # Disabling a leftover local clone frees the bar slot / cloneSourceRestores.
-  omarchy plugin disable alex.menu >/dev/null 2>&1 || true
   omarchy plugin enable "$plugin_id" >/dev/null 2>&1 || true
 fi
 
@@ -25,4 +25,5 @@ omarchy-shell -q omarchy.menu refresh >/dev/null 2>&1 || true
 
 note "done — Super+Space opens OmaMenu (scrolling labels)"
 note "stock omarchy.menu stays disabled while this clone is enabled"
+note "if you also have a personal menu clone enabled, disable it yourself"
 exit 0

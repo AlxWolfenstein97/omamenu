@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.alxwolfenstein97.omamenu",
   "name": "OmaMenu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "AlxWolfenstein97",
   "license": "MIT",
   "description": "Omarchy menu clone with marquee scrolling for truncated highlighted rows.",
