@@ -17,12 +17,13 @@ Omarchy’s menu is narrow on purpose. Long labels (`Heroic (Epic Games)`,
 Hovering or arrowing onto them leaves you guessing. OmaMenu shows the
 rest when you care, and stays quiet when the name already fits.
 
-It also keeps the stock Apps filter: `/usr/share/omarchy/default/omarchy/launcher.hides`
-plus the usual `NoDisplay` / `OnlyShowIn` scan, so Avahi and friends stay out
-of the list.
+It also keeps the stock Apps filter: 4.5’s shared `AppLibrary` owns
+`/usr/share/omarchy/default/omarchy/launcher.hides`, the usual
+`NoDisplay` / `OnlyShowIn` scan, icons and launching, so Avahi and friends
+stay out of the list without a private copy.
 
-This is a small fork of stock menu (marquee + clone plumbing) — upstream menu
-fixes land here when we refresh the repo; grab them with
+This is a small fork of stock menu (marquee only) — rebased onto Omarchy 4.5
+so upstream menu fixes land here when we refresh the repo; grab them with
 `omarchy plugin update`. You don’t need to rebase anything yourself.
 
 ## Install
@@ -42,7 +43,7 @@ clone path uses). Or from a checkout:
 **Needs:** Omarchy shell / Quickshell. Super+Space opens the menu.
 
 No extra packages — OmaMenu is a Quickshell menu clone, not a Pillow mockup
-carousel. (The Style theme extenders that *do* draw PNGs pull `python-pillow`
+carousel. (The Extender plugins that *do* draw PNGs pull `python-pillow`
 themselves; see [Chroma](https://github.com/AlxWolfenstein97/chroma) for the
 family map.)
 
@@ -62,24 +63,17 @@ omarchy plugin remove io.github.alxwolfenstein97.omamenu
 
 ## Notes
 
-- Third-party menu clones do not always receive `shell.appLibrary`. OmaMenu
-  falls back to `DesktopEntries` + a local `AppSearch.js` copy so Apps still
-  populate, with the same hide list as stock.
+- 4.5 injects the shell’s shared `AppLibrary` into menu-kind plugins, so
+  OmaMenu carries no private `AppSearch.js` copy, hide-list scan or icon index.
+  Apps, hidden entries and icons stay in lockstep with stock.
 - Bar widget IPC targets stay `omarchy.menu`; the shell routes them through
   `clonedFrom`.
 
 ## Limits
 
-- **Icons** — prefer `appLibrary.iconSource` when the host wires it. This clone
-  usually gets a **null** `shell.appLibrary` proxy (stock menu gets the real
-  AppLibrary). Gating Image `source` on `appLibrary` alone blanks every app
-  icon after a shell restart. OmaMenu therefore: (1) try the proxy when
-  present, (2) run the same apps/devices + pixmaps disk scan stock uses
-  (`localIconIndex`), (3) fall back to `Quickshell.iconPath`, and (4) bump
-  `iconEpoch` after open / scan / `appsChanged` so Images rebind when file
-  URLs land. That covers missing packs such as Vantablack’s `Yaru-gray` /
-  White’s `Yaru-grey`.
 - Marquee only runs on highlighted overflow rows; idle rows still elide.
+- The 4.5 grid launcher already avoids most label truncation; OmaMenu keeps
+  the marquee for the list, search, font and plugin rows where it still helps.
 
 ## Fresh VM smoke test
 
@@ -87,9 +81,9 @@ omarchy plugin remove io.github.alxwolfenstein97.omamenu
 omarchy plugin add https://github.com/AlxWolfenstein97/omamenu.git --enable
 # disable stock menu if the clone owns the bar slot (Workshop / clone flow)
 omarchy-restart-shell
-# Apps submenu: icons should appear within ~1–2s of first open (disk scan).
-# Switch to a theme with a missing icon pack (e.g. vantablack → Yaru-gray) if
-# installed; icons should still fill in after the scan, not stay blank forever.
+# Apps submenu: rows and icons come from the shell's shared AppLibrary.
+# Highlight an overflowing row (long app name, font, plugin id) and watch it
+# scroll; idle rows should still elide.
 ```
 ## Credits
 

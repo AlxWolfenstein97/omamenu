@@ -10,9 +10,9 @@ bad()  { printf 'FAIL %s\n' "$1"; fail=1; }
 [[ -f $here/manifest.json ]] || bad "manifest.json missing"
 [[ -f $here/Menu.qml ]] || bad "Menu.qml missing"
 [[ -f $here/MenuModel.js ]] || bad "MenuModel.js missing"
-[[ -f $here/AppSearch.js ]] || bad "AppSearch.js missing"
 [[ -f $here/BarWidget.qml ]] || bad "BarWidget.qml missing"
 [[ -f $here/LICENSE ]] || bad "LICENSE missing"
+[[ ! -e $here/AppSearch.js ]] || bad "AppSearch.js should come from the shell AppLibrary"
 
 id=$(jq -r '.id // empty' "$here/manifest.json")
 [[ $id == io.github.alxwolfenstein97.omamenu ]] || bad "manifest id is '$id'"
@@ -20,8 +20,12 @@ cloned=$(jq -r '.omarchy.clonedFrom // empty' "$here/manifest.json")
 [[ $cloned == omarchy.menu ]] || bad "clonedFrom is '$cloned'"
 
 rg -q 'component ScrollingLabel' "$here/Menu.qml" || bad "ScrollingLabel missing"
-rg -q 'launcher\.hides' "$here/Menu.qml" || bad "launcher.hides wiring missing"
-rg -q 'AppSearch' "$here/Menu.qml" || bad "AppSearch import/use missing"
+rg -q 'active: row.hasCursor' "$here/Menu.qml" || bad "marquee activation missing"
+rg -q 'readonly property var appLibrary' "$here/Menu.qml" || bad "shell appLibrary wiring missing"
+rg -q 'searchTerms' "$here/MenuModel.js" || bad "4.5 searchTerms missing"
+rg -q 'readMenuJsonc' "$here/MenuModel.js" || bad "4.5 mid-write-safe reader missing"
+rg -q 'isDisabled' "$here/MenuModel.js" || bad "4.5 disabled rows missing"
+rg -q 'keepMenuRows' "$here/MenuModel.js" || bad "4.5 keepMenuRows missing"
 
 if command -v omarchy-plugin-validate >/dev/null 2>&1; then
   if omarchy-plugin-validate "$here" >/dev/null 2>&1; then
